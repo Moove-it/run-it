@@ -1,17 +1,17 @@
 require 'gosu'
 
 class MooveitRunner < Gosu::Window
-
   WINDOW_WIDTH  = 1280
   WINDOW_HEIGHT = 720
 
-  MAX_JUMP_HEIGHT = 380.0
+  MAX_JUMP_HEIGHT = 300.0
   PLAYER_X_POSITION = 300.0
 
   INITIAL_BACKGROUND_SPEED = 6.0
-  MAX_BACKGROUND_SPEED = 15.0
+  MAX_BACKGROUND_SPEED = 16.0
 
-  FLOOR_HEIGHT = WINDOW_HEIGHT - 104.0
+  FLOOR_HEIGHT = 85.0
+  FLOOR_Y = WINDOW_HEIGHT - FLOOR_HEIGHT
 
   MAX_OBSTACLES = 3
   OBSTACLES_MIN_DISTANCE = 750
@@ -52,7 +52,7 @@ class MooveitRunner < Gosu::Window
   def game_over?
     on_player_obstacle = @obstacles.find(&:on_player_x?)
 
-    on_player_obstacle && FLOOR_HEIGHT - on_player_obstacle.height < @player.y
+    on_player_obstacle && FLOOR_Y - on_player_obstacle.height < @player.y
   end
 
   def reset!
@@ -132,7 +132,7 @@ class MooveitRunner < Gosu::Window
     end
 
     def draw
-      @image.draw_rot(@x, FLOOR_HEIGHT - (@height / 2) + 20, 0, 0)
+      @image.draw_rot(@x, FLOOR_Y - (@height / 2), 0, 0)
     end
   end
 
@@ -169,19 +169,21 @@ class MooveitRunner < Gosu::Window
     attr_accessor :score, :y
 
     def initialize
-      @image = Gosu::Image.new('images/player.png')
+      @normal_image = Gosu::Image.new('images/player/normal.png')
+      @jump_image = Gosu::Image.new('images/player/jump.png')
+      @height = @normal_image.height
       self.restart!
     end
 
     def restart!
-      @y = FLOOR_HEIGHT
+      @y = FLOOR_Y
       @vel_y = 0
       @angle = 90.0
       @score = 0
     end
 
     def jump!
-      return unless ((FLOOR_HEIGHT - 10)..(FLOOR_HEIGHT + 10)).include?(@y)
+      return unless ((FLOOR_Y - 10)..(FLOOR_Y + 10)).include?(@y)
       @angle = 45.0
     end
 
@@ -195,16 +197,20 @@ class MooveitRunner < Gosu::Window
 
       @angle = 135 if @y <= WINDOW_HEIGHT - MAX_JUMP_HEIGHT
 
-      if @y > FLOOR_HEIGHT
+      if @y > FLOOR_Y
         @angle = 90
-        @y = FLOOR_HEIGHT
+        @y = FLOOR_Y
       end
 
       @vel_y *= 0.95
     end
 
     def draw
-      @image.draw_rot(PLAYER_X_POSITION, @y, 1, 0)
+      if @y < FLOOR_Y
+        @jump_image.draw_rot(PLAYER_X_POSITION, @y - (@height / 2), 1, 0)
+      else
+        @normal_image.draw_rot(PLAYER_X_POSITION, @y - (@height / 2), 1, 0)
+      end
     end
   end
 end
