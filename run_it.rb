@@ -1,6 +1,6 @@
 require 'gosu'
 
-class MooveitRunner < Gosu::Window
+class RunIt < Gosu::Window
   WINDOW_WIDTH  = 1280
   WINDOW_HEIGHT = 720
 
@@ -8,7 +8,7 @@ class MooveitRunner < Gosu::Window
   PLAYER_X_POSITION = 300.0
 
   INITIAL_BACKGROUND_SPEED = 6.0
-  MAX_BACKGROUND_SPEED = 16.0
+  MAX_BACKGROUND_SPEED = 17.0
 
   FLOOR_HEIGHT = 85.0
   FLOOR_Y = WINDOW_HEIGHT - FLOOR_HEIGHT
@@ -215,5 +215,4 @@ class MooveitRunner < Gosu::Window
   end
 end
 
-window = MooveitRunner.new
-window.show
+RunIt.new.show
